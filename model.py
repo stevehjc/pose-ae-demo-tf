@@ -1,3 +1,4 @@
+# conding=utf-8
 import tensorflow as tf
 
 def cnv(inp, kernel_shape, scope_name, stride=[1,1,1,1], dorelu=True,
@@ -17,6 +18,7 @@ def cnv(inp, kernel_shape, scope_name, stride=[1,1,1,1], dorelu=True,
         else: return conv
 
 def pool(inp, name=None, kernel=[2,2], stride=[2,2]):
+    '''降采样'''
     # Initialize max-pooling layer (default 2x2 window, stride 2)
     kernel = [1] + kernel + [1]
     stride = [1] + stride + [1]
@@ -38,14 +40,14 @@ def hourglass(inp, n, f, hg_id):
     low3 = cnv(low2, [3, 3, nf, f], '%d_%d_low3' % (hg_id, n))
 
     up_size = tf.shape(up1)[1:3]
-    up2 = tf.image.resize_nearest_neighbor(low3, up_size)
+    up2 = tf.image.resize_nearest_neighbor(low3, up_size) # 上采样
     return up1 + up2
 
 def inference(inp_img, num_output_channel):
     f = 256
-    cnv1 = cnv(inp_img, [7, 7, 3, 64], 'cnv1', stride=[1,2,2,1])
+    cnv1 = cnv(inp_img, [7, 7, 3, 64], 'cnv1', stride=[1,2,2,1]) #stride为2，改变一次大小
     cnv2 = cnv(cnv1, [3, 3, 64, 128], 'cnv2')
-    pool1 = pool(cnv2, 'pool1')
+    pool1 = pool(cnv2, 'pool1') # 第二次改变大小；
     cnv2b = cnv(pool1, [3, 3, 128, 128], 'cnv2b')
     cnv3 = cnv(cnv2b, [3, 3, 128, 128], 'cnv3')
     cnv4 = cnv(cnv3, [3, 3, 128, f], 'cnv4')
@@ -55,7 +57,7 @@ def inference(inp_img, num_output_channel):
     preds = []
     for i in range(4):
         # Hourglass
-        hg = hourglass(inter, 4, f, i)
+        hg = hourglass(inter, 4, f, i) # 沙漏模型没有改变输入特征图大小，降采样和上采样一一对应
 
         # Final output
         cnv5 = cnv(hg, [3, 3, f, f], 'cnv5_%d' % i)

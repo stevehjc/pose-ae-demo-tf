@@ -1,3 +1,7 @@
+# 搬运自https://github.com/umich-vl/pose-ae-demo，增加了部分注释
+
+***
+以下为原作者README
 # Associative Embedding: End-to-End Learning for Joint Detection and Grouping
 
 This repository includes Tensorflow code for running the multi-person pose estimiation algorithm presented in:
