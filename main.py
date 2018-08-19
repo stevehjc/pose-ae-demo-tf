@@ -17,7 +17,7 @@ from tensorflow.contrib.framework import assign_from_checkpoint_fn
 def loadNetwork(path, sess, model_name):
     img = tf.placeholder(dtype = tf.float32, shape = (None, None, None, 3))
     with tf.variable_scope(model_name):
-        pred = inference(img, 68 if model_name=='my_model' else 17)
+        pred = inference(img, 68 if model_name=='my_model' else 17)  # 为什么是68，github上作者解释过了，模型是68，但是实际使用了前34（论文中提到是34）
 
     saver = tf.train.Saver()
     sess.run(tf.global_variables_initializer())
@@ -37,8 +37,8 @@ def loadNetwork(path, sess, model_name):
         print('-------output.shape-------')
         print(output.shape) # (2, 200, 200, 68)
         return {
-            'det': output[:,:,:,:17], # 前17个
-            'tag': output[:,:,:,-17:] # 后17个
+            'det': output[:,:,:,:17], # 前17个 #detection scores
+            'tag': output[:,:,:,-17:] # 后17个 #identity tags
         }
     return func
 
