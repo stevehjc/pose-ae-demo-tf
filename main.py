@@ -49,7 +49,7 @@ def parse_args():
     parser.add_argument('-r', '--refine_model_path', type=str, default=None, help='refinement model path', choices=[None, 'refinement'])
     parser.add_argument('--scales', type=str, default='single', help='switch for multi-scale evaluation', choices=['multi', 'single'])
 
-    parser.add_argument('-i', '--input_image_path', type=str,default='visionteam1.jpg', help='input image name')
+    parser.add_argument('-i', '--input_image_path', type=str,default='/media/han/E/mWork/datasets/tmp/timg(1).jpg', help='input image name')
     parser.add_argument('-o', '--output_image_path', type=str, default='output.jpg', help='output image name')
 
     parser.add_argument('-l', '--imglist', type=str, default=None, help='image path list')

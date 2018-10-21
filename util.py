@@ -33,7 +33,7 @@ def draw_limbs(inp, pred):
     a, b, c, d = bbox[:,0].min(), bbox[:,1].min(), bbox[:,0].max(), bbox[:,1].max()
 
     # 绘制一个包括17个人体关键点的最小边框，表示检测到的某个人
-    cv2.rectangle(inp, (int(a), int(b)), (int(c), int(d)), (255, 255, 255), 2) # 白色边框
+    # cv2.rectangle(inp, (int(a), int(b)), (int(c), int(d)), (255, 255, 255), 2) # 白色边框
 
     # 这里定义了，17个关键点之间如何连接，以及线条颜色
     link('nose', 'eye_l', (255, 0, 0))
@@ -62,9 +62,9 @@ def draw_limbs(inp, pred):
     link('hip_r', 'kne_r', (255, 255, 0))
     link('kne_r', 'ank_r', (255, 255, 0))
 
-def py_max_match(scores):
+def py_max_match(scores): #scores表示(row，col)的带权二分图：row和col的连接强度
     m = Munkres()
-    tmp = m.compute(-scores)
+    tmp = m.compute(-scores) #之所以这里要对scores取反，是因为compute计算的是最低花费；我们需要的是最大匹配，所以要取反
     tmp = np.array(tmp).astype(np.int32)
     return tmp
 
@@ -100,7 +100,7 @@ def match_by_tag(inp, pad=True):
             if diff.shape[0]>diff.shape[1]:
                 diff = np.concatenate((diff, np.zeros((diff.shape[0], diff.shape[0] - diff.shape[1])) + 1e10), axis = 1)
 
-            pairs = py_max_match(-diff)
+            pairs = py_max_match(-diff) #得到了两个关键点的配对关系
             for row, col in pairs:
                 if row<diff2.shape[0] and col < diff2.shape[1] and diff2[row][col] < 1:
                     dic[actualTags_key[col]][ptIdx] = joints[row]
